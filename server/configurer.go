@@ -1,9 +1,17 @@
 package server
 
 import (
+	"encoding/gob"
 	"errors"
+	"io"
 	"strings"
+	"sync"
 )
+
+func init() {
+	gob.Register(new(Nodes))
+	gob.Register(make(map[string]interface{}))
+}
 
 var (
 	ErrExists      = errors.New("配置已经存在")
@@ -11,11 +19,16 @@ var (
 	ErrDelNotEmpty = errors.New("配置中包含其他配置，不能删除")
 )
 
+type Nodes map[string]interface{}
+
 type Configurer struct {
-	Items map[string]interface{}
+	mu    sync.RWMutex
+	Items Nodes
 }
 
 func (c *Configurer) Set(k, v string) error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
 	return c.set(c.Items, k, v)
 }
 
@@ -44,6 +57,8 @@ func (c *Configurer) set(items map[string]interface{}, k, v string) error {
 }
 
 func (c *Configurer) Get(k string) (string, error) {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
 	return c.get(c.Items, k)
 }
 
@@ -74,6 +89,8 @@ func (c *Configurer) get(items map[string]interface{}, k string) (string, error)
 }
 
 func (c *Configurer) Del(k string) error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
 	return c.del(c.Items, k)
 }
 
@@ -99,4 +116,23 @@ func (c *Configurer) del(items map[string]interface{}, k string) error {
 	} else {
 		return nil
 	}
+}
+
+func (c *Configurer) Dumps(w io.Writer) error {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	if err := gob.NewEncoder(w).Encode(c.Items); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *Configurer) Loads(r io.Reader) (PersistentConfiger, error) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	items := Nodes(make(map[string]interface{}))
+	if err := gob.NewDecoder(r).Decode(&items); err != nil {
+		return nil, err
+	}
+	return &Configurer{Items: items}, nil
 }
