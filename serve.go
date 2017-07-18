@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"git.youplus.cc/tiny/hexnuts/server"
 	"github.com/Sirupsen/logrus"
@@ -45,6 +46,13 @@ func serve(args []string) {
 		dumps(*dumpsFile, pc, l)
 		l.Warning("Exiting")
 		os.Exit(0)
+	}()
+
+	go func() {
+		tick := time.Tick(30 * time.Second)
+		for range tick {
+			dumps(*dumpsFile, pc, l)
+		}
 	}()
 
 	l.Fatal(<-ch)
