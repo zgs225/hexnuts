@@ -9,7 +9,7 @@ import (
 )
 
 func serve(args []string) {
-	flags := flag.NewFlagSet("server", flag.PanicOnError)
+	flags := flag.NewFlagSet("hexnuts server", flag.ExitOnError)
 	addr := flags.String("addr", ":5678", "服务监听地址")
 	tls := flags.Bool("tls", false, "是否使用TLS")
 	certFile := flags.String("cert", "", "Cert文件路径")
