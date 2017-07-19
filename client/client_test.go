@@ -16,6 +16,18 @@ func TestGet(t *testing.T) {
 	}
 }
 
+func TestTLSGet(t *testing.T) {
+	client := &HTTPClient{Addr: "https://localhost:5678", TLS: true}
+	k := "hello.world"
+	v, err := client.Get(k)
+	if err != nil {
+		t.Error("Get错误：", err)
+	}
+	if v != "1" {
+		t.Errorf("Get错误：期望 1，得到 %s", v)
+	}
+}
+
 func TestSet(t *testing.T) {
 	client := &HTTPClient{Addr: "http://localhost:5678"}
 	k := "wo.ai.ni"
