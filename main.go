@@ -13,6 +13,8 @@ func main() {
 	switch os.Args[1] {
 	case "server":
 		serve(os.Args[2:])
+	case "sync":
+		sync(os.Args[2:])
 	default:
 		usage()
 	}
