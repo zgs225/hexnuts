@@ -23,13 +23,18 @@ type Nodes map[string]interface{}
 
 type Configurer struct {
 	mu    sync.RWMutex
+	dirty bool
 	Items Nodes
 }
 
 func (c *Configurer) Set(k, v string) error {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	return c.set(c.Items, k, v)
+	if err := c.set(c.Items, k, v); err != nil {
+		return err
+	}
+	c.dirty = true
+	return nil
 }
 
 func (c *Configurer) set(items map[string]interface{}, k, v string) error {
@@ -91,7 +96,11 @@ func (c *Configurer) get(items map[string]interface{}, k string) (string, error)
 func (c *Configurer) Del(k string) error {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	return c.del(c.Items, k)
+	if err := c.del(c.Items, k); err != nil {
+		return err
+	}
+	c.dirty = true
+	return nil
 }
 
 func (c *Configurer) del(items map[string]interface{}, k string) error {
@@ -124,6 +133,7 @@ func (c *Configurer) Dumps(w io.Writer) error {
 	if err := gob.NewEncoder(w).Encode(c.Items); err != nil {
 		return err
 	}
+	c.dirty = false
 	return nil
 }
 
@@ -135,4 +145,8 @@ func (c *Configurer) Loads(r io.Reader) (PersistentConfiger, error) {
 		return nil, err
 	}
 	return &Configurer{Items: items}, nil
+}
+
+func (c *Configurer) Dirty() bool {
+	return c.dirty
 }

@@ -31,10 +31,11 @@ func serve(args []string) {
 	ch := make(chan error)
 
 	go func(ch chan error) {
-		l.Info("Listening on ", *addr)
 		if *tls {
+			l.Infof("Listening http server on %s with TLS", *addr)
 			ch <- http.ListenAndServeTLS(*addr, *certFile, *keyFile, lh)
 		} else {
+			l.Infof("Listening http server on %s", *addr)
 			ch <- http.ListenAndServe(*addr, lh)
 		}
 	}(ch)
@@ -59,15 +60,17 @@ func serve(args []string) {
 }
 
 func dumps(filepath string, c server.PersistentConfiger, logger *logrus.Logger) {
-	logger.Infof("Dumping to %s...", filepath)
-	f, err := os.Create(filepath)
-	if err != nil {
-		logger.Panicln(err)
-	}
-	defer f.Close()
+	if c.Dirty() {
+		logger.Infof("Dumping to %s...", filepath)
+		f, err := os.Create(filepath)
+		if err != nil {
+			logger.Panicln(err)
+		}
+		defer f.Close()
 
-	if err := c.Dumps(f); err != nil {
-		logger.Panicln(err)
+		if err := c.Dumps(f); err != nil {
+			logger.Panicln(err)
+		}
 	}
 }
 

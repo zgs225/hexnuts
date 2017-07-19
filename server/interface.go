@@ -22,4 +22,6 @@ type PersistentConfiger interface {
 	Dumps(w io.Writer) error
 
 	Loads(r io.Reader) (PersistentConfiger, error)
+
+	Dirty() bool
 }
