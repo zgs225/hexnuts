@@ -5,6 +5,11 @@ var Config = {
             default: {
                 dbname: "youplus"
             }
+        ],
+        redis: [
+            default: {
+                dbname: 1
+            }
         ]
     }
 };

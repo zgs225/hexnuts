@@ -5,6 +5,11 @@ var Config = {
             default: {
                 dbname: "{% db.mysql.default.dbname %}"
             }
+        ],
+        redis: [
+            default: {
+                dbname: {% hello.world %}
+            }
         ]
     }
 };
