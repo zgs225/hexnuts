@@ -18,7 +18,7 @@ func serve(args []string) {
 	tls := flags.Bool("tls", false, "是否使用TLS")
 	certFile := flags.String("cert", "", "Cert文件路径")
 	keyFile := flags.String("key", "", "Key文件路径")
-	dumpsFile := flags.String("dumps", "dumps.db", "持久化保存文件")
+	dumpsFile := flags.String("dumps", "hexnuts.db", "持久化保存文件")
 	flags.Parse(args)
 
 	logrus.SetFormatter(&logrus.TextFormatter{TimestampFormat: "2006-01-02 15:04:05", FullTimestamp: true})
@@ -49,7 +49,7 @@ func serve(args []string) {
 	}()
 
 	go func() {
-		tick := time.Tick(30 * time.Second)
+		tick := time.Tick(1 * time.Minute)
 		for range tick {
 			dumps(*dumpsFile, pc, l)
 		}
