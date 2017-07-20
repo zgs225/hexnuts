@@ -72,6 +72,7 @@ func (s *TCPServer) handle(conn net.Conn) {
 			s.Logger.Errorf("Read from conn error: %v", err)
 			return
 		}
+		s.Logger.Debug(msg)
 		cmd := string(bytes.ToUpper(msg[:3]))
 		switch cmd {
 		case "REG":
@@ -123,6 +124,8 @@ func (s *TCPServer) Register(name string, conn net.Conn) error {
 		}
 	}(s)
 
+	s.Logger.Infof("REG %s from %s", name, conn.RemoteAddr().String())
+
 	return nil
 }
 
@@ -147,6 +150,7 @@ func (s *TCPServer) Deregister(name string) {
 		au.Alive = false
 		au.Cancel()
 	}
+	s.Logger.Error("DEG ", name)
 }
 
 func (s *TCPServer) Heartbeat() {
@@ -157,18 +161,23 @@ func (s *TCPServer) Heartbeat() {
 			if delta > time.Second*30 {
 				s.Deregister(n)
 			} else if delta > time.Second*2 {
+				s.Logger.Warnf("LIV %s INACTIVE", au.String())
 				au.Alive = false
 			}
 		}
 	}
 }
 
-func (s *TCPServer) EventLoop() {
-	for event := range s.Ch {
-		for _, au := range s.Audiences {
-			if au.Alive {
-				au.Ch <- event
-			}
+func (s *TCPServer) Notify(e *Event) {
+	for _, au := range s.Audiences {
+		if au.Alive {
+			au.Ch <- e
 		}
+	}
+}
+
+func (s *TCPServer) EventLoop() {
+	for e := range s.Ch {
+		s.Notify(e)
 	}
 }

@@ -2,6 +2,7 @@ package monitor
 
 import (
 	"context"
+	"fmt"
 	"net"
 	"time"
 )
@@ -19,4 +20,8 @@ type Audience struct {
 
 func (au *Audience) Notify(e *Event) error {
 	return nil
+}
+
+func (au *Audience) String() string {
+	return fmt.Sprintf("%s[%s]", au.Name, au.Conn.RemoteAddr().String())
 }
