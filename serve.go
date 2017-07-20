@@ -8,17 +8,19 @@ import (
 	"syscall"
 	"time"
 
+	"git.youplus.cc/tiny/hexnuts/monitor"
 	"git.youplus.cc/tiny/hexnuts/server"
 	"github.com/Sirupsen/logrus"
 )
 
 func serve(args []string) {
 	flags := flag.NewFlagSet("hexnuts server", flag.ExitOnError)
-	addr := flags.String("addr", ":5678", "服务监听地址")
+	addr := flags.String("addr", ":5678", "HTTP服务地址")
 	tls := flags.Bool("tls", false, "是否使用TLS")
 	certFile := flags.String("cert", "", "Cert文件路径")
 	keyFile := flags.String("key", "", "Key文件路径")
 	dumpsFile := flags.String("dumps", "hexnuts.db", "持久化保存文件")
+	monitorAddr := flags.String("monitor", ":5679", "TCP监听服务地址")
 	flags.Parse(args)
 
 	logrus.SetFormatter(&logrus.TextFormatter{TimestampFormat: "2006-01-02 15:04:05", FullTimestamp: true})
@@ -28,6 +30,15 @@ func serve(args []string) {
 	s := server.Server{Configer: pc}
 	h := s.MakeHTTPServer()
 	lh := server.LoggerHandlerMiddleware(l)(h)
+	ms := &monitor.TCPServer{
+		Addr:      *monitorAddr,
+		TLS:       *tls,
+		Cert:      *certFile,
+		Key:       *keyFile,
+		Audiences: make(map[string]*monitor.Audience),
+		Ch:        make(chan *monitor.Event),
+		Logger:    l,
+	}
 	ch := make(chan error)
 
 	go func(ch chan error) {
@@ -39,6 +50,15 @@ func serve(args []string) {
 			ch <- http.ListenAndServe(*addr, lh)
 		}
 	}(ch)
+
+	go func() {
+		if *tls {
+			l.Infof("Listening monitor server on %s with TLS", *monitorAddr)
+		} else {
+			l.Infof("Listening monitor server on %s", *monitorAddr)
+		}
+		ms.ServeLoop()
+	}()
 
 	go func() {
 		ch := make(chan os.Signal, 3)
