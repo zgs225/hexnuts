@@ -7,8 +7,10 @@ import (
 	"log"
 	"net"
 	"os"
+	"os/signal"
 	stdpath "path"
 	"path/filepath"
+	"syscall"
 	"time"
 
 	"git.youplus.cc/tiny/hexnuts/client"
@@ -48,6 +50,8 @@ func monitoring(args []string) {
 		log.Fatal(err)
 	}
 
+	go handleSignals(mon)
+
 	go func() {
 		tick := time.Tick(time.Second)
 		for range tick {
@@ -74,6 +78,15 @@ func monitoring(args []string) {
 	for err := range che {
 		log.Println(err)
 	}
+}
+
+func handleSignals(mon *stdmonitor.Client) {
+	c := make(chan os.Signal)
+	signal.Notify(c, os.Interrupt, syscall.SIGQUIT, syscall.SIGTERM)
+	<-c
+	log.Println("Exiting...")
+	mon.Deregister()
+	os.Exit(0)
 }
 
 func getName() string {
@@ -106,9 +119,9 @@ func walkFunc(root, out string, pairs map[string]*stdsync.Pair) filepath.WalkFun
 
 func getOutputFile(root, file, outdir string) string {
 	ext := stdpath.Ext(file)
-	s := len(root)
+	s := len(root) - 1
 	e := len(file) - len(ext)
-	if ext == ".hexhuts" {
+	if ext == ".hexnuts" {
 		return stdpath.Join(outdir, file[s:e])
 	} else {
 		return stdpath.Join(outdir, file[s:])

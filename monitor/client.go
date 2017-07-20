@@ -85,6 +85,16 @@ func (c *Client) Live() error {
 	return c.writer().Flush()
 }
 
+func (c *Client) Deregister() error {
+	c.mu.Lock()
+	c.mu.Unlock()
+
+	if _, err := c.writer().WriteString(fmt.Sprintf("DER %s\n", c.Name)); err != nil {
+		return err
+	}
+	return c.writer().Flush()
+}
+
 func (c *Client) ReadEvent() error {
 	c.mu.Lock()
 	c.mu.Unlock()

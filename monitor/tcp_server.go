@@ -6,6 +6,7 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
+	"io"
 	"net"
 	"sync"
 	"time"
@@ -69,8 +70,12 @@ func (s *TCPServer) handle(conn net.Conn) {
 	for {
 		msg, err := r.ReadBytes('\n')
 		if err != nil {
-			s.Logger.Errorf("Read from conn error: %v", err)
-			return
+			if err != io.EOF {
+				s.Logger.Errorf("Read from conn error: %v", err)
+				continue
+			} else {
+				return
+			}
 		}
 		s.Logger.Debug(msg)
 		cmd := string(bytes.ToUpper(msg[:3]))
@@ -89,6 +94,9 @@ func (s *TCPServer) handle(conn net.Conn) {
 				s.Deregister(name)
 				return
 			}
+		case "DER":
+			name := string(bytes.Trim(msg[3:], " \t\n\r\f"))
+			s.Deregister(name)
 		default:
 			s.Logger.Errorf("Unrecognized message: %q", msg)
 			continue
