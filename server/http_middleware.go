@@ -29,7 +29,12 @@ func (w *LoggerResponseWriter) WriteHeader(status int) {
 func (h *LoggerHandler) ServeHTTP(w http.ResponseWriter, request *http.Request) {
 	lw := &LoggerResponseWriter{w, http.StatusOK}
 	defer func(b time.Time) {
-		h.Logger.Infof("%s\t%s\t%s\t%s\t%d %s\t%v", request.Method, request.URL.Path, request.URL.Query().Encode(), GetIPAdress(request), lw.Code, http.StatusText(lw.Code), time.Since(b))
+		if request.Method == http.MethodPost {
+			request.ParseForm()
+			h.Logger.Infof("%s\t%s\t%s\t%s\t%d %s\t%v", request.Method, request.URL.Path, request.PostForm.Encode(), GetIPAdress(request), lw.Code, http.StatusText(lw.Code), time.Since(b))
+		} else {
+			h.Logger.Infof("%s\t%s\t%s\t%s\t%d %s\t%v", request.Method, request.URL.Path, request.URL.Query().Encode(), GetIPAdress(request), lw.Code, http.StatusText(lw.Code), time.Since(b))
+		}
 	}(time.Now())
 	h.Next.ServeHTTP(lw, request)
 }
