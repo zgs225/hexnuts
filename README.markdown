@@ -66,3 +66,7 @@ GET /get?key=xxxxx
 POST /del
 key=xxxxx
 ```
+
+### TODOS
+
++ [ ] Web视图
