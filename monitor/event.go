@@ -6,6 +6,7 @@ import (
 
 const (
 	Events_ADD int8 = iota
+	Events_Update
 	Events_DEL
 )
 

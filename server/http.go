@@ -35,6 +35,27 @@ func (s *Server) MakeHTTPServer() http.Handler {
 		textResponse(w, http.StatusOK, []byte("ok"))
 	})
 
+	mux.HandleFunc("/update", func(w http.ResponseWriter, request *http.Request) {
+		if request.Method != http.MethodPost {
+			http.NotFound(w, request)
+			return
+		}
+
+		request.ParseForm()
+		k := request.PostFormValue("key")
+		v := request.PostFormValue("value")
+		err := s.Configer.Update(k, v)
+
+		if err != nil {
+			textResponse(w, http.StatusBadRequest, []byte(err.Error()))
+			return
+		}
+
+		s.Notify(&monitor.Event{T: monitor.Events_Update, K: k, V: v})
+
+		textResponse(w, http.StatusOK, []byte("ok"))
+	})
+
 	mux.HandleFunc("/get", func(w http.ResponseWriter, request *http.Request) {
 		request.ParseForm()
 		k := request.FormValue("key")

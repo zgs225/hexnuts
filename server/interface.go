@@ -14,6 +14,9 @@ type Configer interface {
 
 	// 删除配置
 	Del(string) error
+
+	// 更新配置
+	Update(string, string) error
 }
 
 type PersistentConfiger interface {

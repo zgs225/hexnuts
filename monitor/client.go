@@ -113,6 +113,8 @@ func (c *Client) ReadEvent() error {
 	switch t {
 	case Events_ADD:
 		return c.SyncPairs()
+	case Events_Update:
+		return c.SyncPairs()
 	case Events_DEL:
 		return c.SyncPairs()
 	default:

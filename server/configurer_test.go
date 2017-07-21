@@ -25,6 +25,18 @@ func TestConfigurer(t *testing.T) {
 		}
 	}
 
+	if err := c.Update("hello.world", "123"); err != nil {
+		t.Error("更新配置错误：", err)
+	} else {
+		if v, err := c.Get("hello.world"); err != nil {
+			t.Errorf("获取配置错误：%v", err)
+		} else {
+			if v != "123" {
+				t.Errorf("获取配置错误：\n\t期望：123\n\t获得：%s", v)
+			}
+		}
+	}
+
 	if _, err := c.Get("not.exists"); err == nil {
 		t.Error("获取配置错误：应该返回不存在此配置的错误")
 	}
