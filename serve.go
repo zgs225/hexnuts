@@ -21,13 +21,14 @@ func serve(args []string) {
 	keyFile := flags.String("key", "", "Key文件路径")
 	dumpsFile := flags.String("dumps", "hexnuts.db", "持久化保存文件")
 	monitorAddr := flags.String("monitor", ":5679", "TCP监听服务地址")
+	root := flags.String("root", "./html/", "HTML root 路径")
 	flags.Parse(args)
 
 	logrus.SetFormatter(&logrus.TextFormatter{TimestampFormat: "2006-01-02 15:04:05", FullTimestamp: true})
 	l := logrus.StandardLogger()
 	c := &server.Configurer{Items: make(map[string]interface{})}
 	pc := loads(*dumpsFile, c, l)
-	s := server.Server{Configer: pc}
+	s := server.Server{Configer: pc, Root: http.Dir(*root)}
 	h := s.MakeHTTPServer()
 	lh := server.LoggerHandlerMiddleware(l)(h)
 	ms := &monitor.TCPServer{

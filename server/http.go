@@ -1,7 +1,10 @@
 package server
 
 import (
+	"encoding/json"
+	"html/template"
 	"net/http"
+	"path/filepath"
 
 	"github.com/zgs225/hexnuts/monitor"
 )
@@ -9,6 +12,7 @@ import (
 type Server struct {
 	Configer Configer
 	Monitor  *monitor.TCPServer
+	Root     http.Dir
 }
 
 func (s *Server) MakeHTTPServer() http.Handler {
@@ -89,7 +93,33 @@ func (s *Server) MakeHTTPServer() http.Handler {
 		textResponse(w, http.StatusOK, []byte("ok"))
 	})
 
+	s.handleHTML(mux)
+
 	return mux
+}
+
+func (s *Server) handleHTML(mux *http.ServeMux) {
+	mux.HandleFunc("/ui/", func(w http.ResponseWriter, request *http.Request) {
+		t, err := template.ParseFiles(filepath.Join(string(s.Root), "index.html"))
+		if err != nil {
+			textResponse(w, 500, []byte(err.Error()))
+			return
+		}
+		w.Header().Set("Server", "hexnuts")
+		if err := t.Execute(w, nil); err != nil {
+			textResponse(w, 500, []byte(err.Error()))
+		}
+	})
+
+	mux.HandleFunc("/all", func(w http.ResponseWriter, request *http.Request) {
+		rv := s.Configer.All()
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		w.Header().Set("Server", "hexnuts")
+		json.NewEncoder(w).Encode(&rv)
+	})
+
+	mux.Handle("/static/", http.FileServer(s.Root))
 }
 
 func (s *Server) Notify(e *monitor.Event) {

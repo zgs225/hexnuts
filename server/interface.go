@@ -17,6 +17,9 @@ type Configer interface {
 
 	// 更新配置
 	Update(string, string) error
+
+	// 获取所有配置
+	All() [][2]string
 }
 
 type PersistentConfiger interface {

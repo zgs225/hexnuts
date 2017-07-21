@@ -3,6 +3,7 @@ package server
 import (
 	"encoding/gob"
 	"errors"
+	"fmt"
 	"io"
 	"strings"
 	"sync"
@@ -177,4 +178,32 @@ func (c *Configurer) Loads(r io.Reader) (PersistentConfiger, error) {
 
 func (c *Configurer) Dirty() bool {
 	return c.dirty
+}
+
+func (c *Configurer) All() [][2]string {
+	rv := make([][2]string, 0)
+	rv = c.all("", c.Items, rv)
+	return rv
+}
+
+func (c *Configurer) all(parent string, items Nodes, rv [][2]string) [][2]string {
+	for k, v := range items {
+		var fk string
+		if len(parent) > 0 {
+			fk = fmt.Sprintf("%s.%s", parent, k)
+		} else {
+			fk = k
+		}
+
+		if v2, ok := v.(string); ok {
+			i := [2]string{fk, v2}
+			rv = append(rv, i)
+		}
+
+		if v2, ok := v.(map[string]interface{}); ok {
+			rv = c.all(fk, v2, rv)
+		}
+	}
+
+	return rv
 }
