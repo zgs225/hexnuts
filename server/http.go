@@ -3,7 +3,7 @@ package server
 import (
 	"net/http"
 
-	"git.youplus.cc/tiny/hexnuts/monitor"
+	"github.com/zgs225/hexnuts/monitor"
 )
 
 type Server struct {

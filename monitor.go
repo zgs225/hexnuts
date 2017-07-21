@@ -14,9 +14,9 @@ import (
 	"syscall"
 	"time"
 
-	"git.youplus.cc/tiny/hexnuts/client"
-	stdmonitor "git.youplus.cc/tiny/hexnuts/monitor"
-	stdsync "git.youplus.cc/tiny/hexnuts/sync"
+	"github.com/zgs225/hexnuts/client"
+	stdmonitor "github.com/zgs225/hexnuts/monitor"
+	stdsync "github.com/zgs225/hexnuts/sync"
 )
 
 func monitoring(args []string) {

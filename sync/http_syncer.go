@@ -8,7 +8,7 @@ import (
 	"os"
 	"regexp"
 
-	"git.youplus.cc/tiny/hexnuts/client"
+	"github.com/zgs225/hexnuts/client"
 )
 
 const (

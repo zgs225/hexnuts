@@ -8,9 +8,9 @@ import (
 	"syscall"
 	"time"
 
-	"git.youplus.cc/tiny/hexnuts/monitor"
-	"git.youplus.cc/tiny/hexnuts/server"
 	"github.com/Sirupsen/logrus"
+	"github.com/zgs225/hexnuts/monitor"
+	"github.com/zgs225/hexnuts/server"
 )
 
 func serve(args []string) {

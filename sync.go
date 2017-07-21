@@ -7,8 +7,8 @@ import (
 	"io"
 	"os"
 
-	"git.youplus.cc/tiny/hexnuts/client"
-	stdsync "git.youplus.cc/tiny/hexnuts/sync"
+	"github.com/zgs225/hexnuts/client"
+	stdsync "github.com/zgs225/hexnuts/sync"
 )
 
 func sync(args []string) {

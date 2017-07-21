@@ -5,7 +5,7 @@ import (
 	"context"
 	"testing"
 
-	"git.youplus.cc/tiny/hexnuts/client"
+	"github.com/zgs225/hexnuts/client"
 )
 
 func TestSync(t *testing.T) {

@@ -11,7 +11,7 @@ import (
 	"sync"
 	"time"
 
-	stdsync "git.youplus.cc/tiny/hexnuts/sync"
+	stdsync "github.com/zgs225/hexnuts/sync"
 )
 
 type Client struct {
