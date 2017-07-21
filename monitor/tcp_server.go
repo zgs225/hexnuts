@@ -78,6 +78,10 @@ func (s *TCPServer) handle(conn net.Conn) {
 			}
 		}
 		s.Logger.Debug(msg)
+		if len(msg) < 3 {
+			s.Logger.Errorf("Unrecognized message: %q", msg)
+			continue
+		}
 		cmd := string(bytes.ToUpper(msg[:3]))
 		switch cmd {
 		case "REG":
