@@ -100,7 +100,7 @@ func getName() string {
 		log.Fatalln(err)
 	}
 	t := time.Now().Unix()
-	return fmt.Sprintf("%s%d", n, t)
+	return fmt.Sprintf("%s.%d", n, t)
 }
 
 func walkFunc(root, out string, pairs map[string]*stdsync.Pair) filepath.WalkFunc {
