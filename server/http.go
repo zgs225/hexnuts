@@ -2,10 +2,13 @@ package server
 
 import (
 	"net/http"
+
+	"git.youplus.cc/tiny/hexnuts/monitor"
 )
 
 type Server struct {
 	Configer Configer
+	Monitor  *monitor.TCPServer
 }
 
 func (s *Server) MakeHTTPServer() http.Handler {
@@ -26,6 +29,8 @@ func (s *Server) MakeHTTPServer() http.Handler {
 			textResponse(w, http.StatusBadRequest, []byte(err.Error()))
 			return
 		}
+
+		s.Notify(&monitor.Event{T: monitor.Events_ADD, K: k, V: v})
 
 		textResponse(w, http.StatusOK, []byte("ok"))
 	})
@@ -58,10 +63,18 @@ func (s *Server) MakeHTTPServer() http.Handler {
 			return
 		}
 
+		s.Notify(&monitor.Event{T: monitor.Events_DEL, K: k})
+
 		textResponse(w, http.StatusOK, []byte("ok"))
 	})
 
 	return mux
+}
+
+func (s *Server) Notify(e *monitor.Event) {
+	if s.Monitor != nil {
+		s.Monitor.Notify(e)
+	}
 }
 
 func textResponse(w http.ResponseWriter, code int, data []byte) {

@@ -39,6 +39,7 @@ func serve(args []string) {
 		Ch:        make(chan *monitor.Event),
 		Logger:    l,
 	}
+	s.Monitor = ms
 	ch := make(chan error)
 
 	go func(ch chan error) {

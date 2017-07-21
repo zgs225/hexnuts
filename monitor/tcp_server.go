@@ -118,16 +118,21 @@ func (s *TCPServer) Register(name string, conn net.Conn) error {
 		Last:    time.Now(),
 		Name:    name,
 		Timeout: 30 * time.Second,
+		Logger:  s.Logger.WithField("audience", name),
 	}
 	s.Audiences[name] = au
 
 	go func(s *TCPServer) {
+		au.Logger.Info("Event channel starting...")
 		for {
 			select {
 			case <-au.Ctx.Done():
 				return
 			case e := <-au.Ch:
-				au.Notify(e)
+				err := au.Notify(e)
+				if err != nil {
+					au.Logger.WithError(err).Errorf("Event %s error", e.String)
+				}
 			}
 		}
 	}(s)

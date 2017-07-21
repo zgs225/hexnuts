@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"net"
 	"os"
@@ -76,6 +77,10 @@ func monitoring(args []string) {
 	}()
 
 	for err := range che {
+		if err == io.EOF {
+			log.Println("Connection closed")
+			os.Exit(0)
+		}
 		log.Println(err)
 	}
 }

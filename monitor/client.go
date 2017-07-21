@@ -5,6 +5,7 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
+	"log"
 	"net"
 	"strconv"
 	"sync"
@@ -103,7 +104,6 @@ func (c *Client) ReadEvent() error {
 	if err != nil {
 		return err
 	}
-
 	i, err := strconv.ParseInt(string(data[0]), 10, 8)
 	if err != nil {
 		return err
@@ -121,6 +121,7 @@ func (c *Client) ReadEvent() error {
 }
 
 func (c *Client) SyncPairs() error {
+	log.Println("Sync files...")
 	ch := make(chan error)
 	done := make(chan struct{})
 	wg := sync.WaitGroup{}
