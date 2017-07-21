@@ -1,0 +1,15 @@
+var Config = {
+    debug: "{% hello.world %}",
+    db: {
+        mysql: [
+            default: {
+                dbname: "{% db.mysql.default.dbname %}"
+            }
+        ],
+        redis: [
+            default: {
+                dbname: {% hello.world %}
+            }
+        ]
+    }
+};
