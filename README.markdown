@@ -1,7 +1,7 @@
 HEXNUTS
 ===
 
-配置服务 for Youplus
+配置服务 By Pure Golang. 根据配置生成配置文件。
 
 ### Usage
 
