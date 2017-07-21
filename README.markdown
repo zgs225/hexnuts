@@ -36,6 +36,10 @@ hexnuts monitor -server http://localhost:5678 -monitor.server localhost:5679 -in
 hexnuts sync -tls -server http://localhost:5678 -in ./config/config.js.hexnuts -out ./config/config.js
 ```
 
+#### 访问UI
+
+`http://localhost:5678/ui/`
+
 ### API
 
 #### 保存配置
@@ -69,4 +73,4 @@ key=xxxxx
 
 ### TODOS
 
-+ [ ] Web视图
++ [x] Web视图
