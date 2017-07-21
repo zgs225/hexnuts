@@ -84,3 +84,7 @@ func (hs *HTTPSyncer) getSyncContexts(data []byte) []*SyncContext {
 	}
 	return rv
 }
+
+func (hs *HTTPSyncer) DelSymbol(key string) {
+	delete(hs.Symbols, key)
+}

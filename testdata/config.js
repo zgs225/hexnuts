@@ -1,5 +1,5 @@
 var Config = {
-    debug: "1",
+    debug: "321",
     db: {
         mysql: [
             default: {
@@ -8,7 +8,7 @@ var Config = {
         ],
         redis: [
             default: {
-                dbname: 1
+                dbname: 321
             }
         ]
     }

@@ -7,6 +7,8 @@ import (
 
 type Syncer interface {
 	Sync(context.Context, io.Reader, io.Writer) error
+
+	DelSymbol(string)
 }
 
 type FileSyncer interface {

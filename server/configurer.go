@@ -65,7 +65,11 @@ func (c *Configurer) set(items map[string]interface{}, k, v string) error {
 func (c *Configurer) Update(k, v string) error {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	return c.update(c.Items, k, v)
+	if err := c.update(c.Items, k, v); err != nil {
+		return err
+	}
+	c.dirty = true
+	return nil
 }
 
 func (c *Configurer) update(items map[string]interface{}, k, v string) error {

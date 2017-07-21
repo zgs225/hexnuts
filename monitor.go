@@ -107,15 +107,7 @@ func walkFunc(root, out string, pairs map[string]*stdsync.Pair) filepath.WalkFun
 	return func(path string, info os.FileInfo, err error) error {
 		if !info.IsDir() && stdpath.Ext(path) == ".hexnuts" {
 			log.Printf("minitoring %s\n", path)
-			r, err := os.Open(path)
-			if err != nil {
-				return err
-			}
-			w, err := os.Create(getOutputFile(root, path, out))
-			if err != nil {
-				return err
-			}
-			pair := &stdsync.Pair{Src: r, Dst: w}
+			pair := &stdsync.Pair{Src: path, Dst: getOutputFile(root, path, out)}
 			pairs[path] = pair
 		}
 		return nil

@@ -2,6 +2,7 @@ package monitor
 
 import (
 	"bufio"
+	"bytes"
 	"context"
 	"crypto/tls"
 	"fmt"
@@ -21,7 +22,7 @@ type Client struct {
 	Name       string
 	Conn       net.Conn
 	Dialed     bool
-	Syncer     stdsync.Syncer
+	Syncer     stdsync.FileSyncer
 	Pairs      map[string]*stdsync.Pair
 
 	w  *bufio.Writer
@@ -109,6 +110,12 @@ func (c *Client) ReadEvent() error {
 		return err
 	}
 
+	kv := bytes.Split(bytes.Trim(data[1:], " \r\n"), []byte(" "))
+	if len(kv) == 0 {
+		return fmt.Errorf("不支持的消息: %q", data)
+	}
+	c.Syncer.DelSymbol(string(kv[0]))
+
 	t := int8(i)
 	switch t {
 	case Events_ADD:
@@ -130,7 +137,7 @@ func (c *Client) SyncPairs() error {
 	for _, p := range c.Pairs {
 		wg.Add(1)
 		go func(ch chan error, p *stdsync.Pair) {
-			if err := c.Syncer.Sync(c.Ctx, p.Src, p.Dst); err != nil {
+			if err := c.Syncer.SyncFile(c.Ctx, p.Src, p.Dst); err != nil {
 				ch <- err
 			}
 			wg.Done()
