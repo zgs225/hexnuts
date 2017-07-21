@@ -163,7 +163,7 @@ func (s *TCPServer) Deregister(name string) {
 		au.Alive = false
 		au.Cancel()
 	}
-	s.Logger.Error("DEG ", name)
+	s.Logger.Error("DER ", name)
 }
 
 func (s *TCPServer) Heartbeat() {
