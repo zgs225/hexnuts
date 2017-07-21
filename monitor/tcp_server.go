@@ -182,6 +182,7 @@ func (s *TCPServer) Heartbeat() {
 }
 
 func (s *TCPServer) Notify(e *Event) {
+	s.Logger.Infof("Notify event[%d] key=%s value=%s", e.T, e.K, e.V)
 	for _, au := range s.Audiences {
 		if au.Alive {
 			au.Ch <- e
