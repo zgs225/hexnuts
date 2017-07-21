@@ -5,7 +5,7 @@ HEXNUTS
 
 ### Usage
 
-``` bash
+```
 Usage:
         hexnuts command [arguments]
 
@@ -20,19 +20,19 @@ Commands:
 
 #### 启动服务
 
-``` bash
+```
 hexnuts server -tls -cert ./certs/cert.pem -key ./certs/key.pem -addr :5678 -monitor :5679 -dumps ./hexdumps.db
 ```
 
 #### 启动同步监听
 
-``` bash
+```
 hexnuts monitor -server http://localhost:5678 -monitor.server localhost:5679 -in ./config -out ./config -tls
 ```
 
 #### 手动同步
 
-``` bash
+```
 hexnuts sync -tls -server http://localhost:5678 -in ./config/config.js.hexnuts -out ./config/config.js
 ```
 
