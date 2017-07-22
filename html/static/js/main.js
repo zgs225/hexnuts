@@ -116,7 +116,7 @@ $(function($) {
             renderTree(elem, k, v, 0);
         });
 
-        elem.EasyTree();
+        // elem.EasyTree();
     }
 
     function renderTree(root, k, v, depth) {
