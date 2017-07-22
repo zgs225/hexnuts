@@ -108,11 +108,33 @@ $(function($) {
     }
 
     function renderTable(data) {
-        var table = $('.table > tbody');
-        table.empty();
+        var elem = $('.easy-tree > ul');
+        elem.empty();
 
-        $.each(data, function(i, config) {
-            table.append('<tr><td>' + config[0] + '</td><td>' + config[1] + '</td></tr>');
+        $(data).each(function(_, kv) {
+            var k = kv[0], v = kv[1];
+            renderTree(elem, k, v, 0);
         });
+
+        elem.EasyTree();
+    }
+
+    function renderTree(root, k, v, depth) {
+        var i = k.indexOf('.');
+        if (i == -1) { // leaf node
+            root.append('<li class="leaf">' + k + ': ' + v + '</li>');
+        } else {
+            var pk = k.slice(0, i),
+                ck = k.slice(i+1),
+                selector = 'li.' + pk,
+                elem = root.find(selector);
+
+            if (!elem.length) {
+                elem = $('<li class="' + pk + '">' + pk + '<ul></ul></li>');
+                root.append(elem);
+            }
+
+            renderTree(elem.find('ul'), ck, v, depth+1);
+        }
     }
 });
