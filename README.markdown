@@ -74,3 +74,4 @@ key=xxxxx
 ### TODOS
 
 + [x] Web视图
++ [ ] 监听本地文件修改
