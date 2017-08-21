@@ -4,7 +4,6 @@ body {
 
 body .col-md-8 {
     background-color: #f8f8f8;
-    padding-bottom: 30px;
 }
 
 body .col-md-8 .navbar-default {
@@ -17,26 +16,4 @@ body .col-md-8 .navbar-default .navbar-brand {
 
 body .form-container {
     padding: 30px 0;
-}
-
-body .easy-tree {
-    background-color: #f8f8f8;
-    color: #333;
-}
-
-.easy-tree li.parent_li>span:hover, .easy-tree li.parent_li>span:hover+ul li span {
-    background-color: #333;
-    color: #f8f8f8;
-}
-
-.easy-tree li::before {
-    border-left: 1px solid #ccc;
-}
-
-.easy-tree li::after {
-    border-top: 1px solid #ccc;
-}
-
-.easy-tree li>span {
-    border-color: #ccc;
 }
